@@ -6,12 +6,6 @@ output: html_document
 
 Ablauf:
 
-* R and RStudio
-
-  - Terms & Concepts
-  
-  - Look and Feel
-
 * Project folder structure
 
   - R Project File
@@ -19,9 +13,20 @@ Ablauf:
   - Data Folder
   
   - Docs Folder
-  
-* Mardown Document Structure
 
+* R and RStudio
+
+  - Terms & Concepts
+  
+  - Look and Feel
+  
+* RMarkdown Document Structure
+
+  - Setup Chunk
+  
+  - Libraries
+  
+  - Headlines and ToC
 
 
 # Important Terms
@@ -30,24 +35,68 @@ Ablauf:
 
 Statistics program that does all the computation (the motor under the hood). Direct interaction with R through the console in the bottom left panel.
 
+Update R to the most recent version every few months via the installr package.
+
+install.packages("installr")
+
+installr::updateR()
+
 ## RStudio
 
 The interface through which we will normally interact with R. Consists of four panels (the car's dashboard and steering wheel).
+
 Top left: RMarkdown or Script files
+
 Bottom left: Console
+
 Top right: Environment, Tutorials
+
 Bottom right: Files, Packages, Help
 
-## RMarkdown document
+### RMarkdown document
 
 This is where you will write your code in RStudio. Enables a good integration of text and code for reproducible analysis scripts. Top left panel in RStudio. Always assumes its own location as the reference point for the location of files.
 
-## Console
+### Console
+
+THe place where R does its magic.
+
+### Environment
+
+Shows all the objects that R can currently work with.
 
 
-## Working Directory
+### Files
+
+The files and folders that are in your current working directory.
+
+
+### Help
+
+To get more information about a function, type ?FUNCTIONNAME in the console and you will get information in the Help panel.
+
+
+### Packages
+
+All the packages that you have installed. Try to update them at least once a month using the "Update" icon.
+
+To install: install.packages("PACKAGENAME")
+
+To load: library(PACKAGENAME)
+
+
+### Script File
+
+Alternative to RMarkdown document
+
+
+### Tutorials
+
+Download learnr package to get some cool tutorials to expand your knowledge on R.
+
+
+### Working Directory
 
 The place that R assumes as the reference point for the location of files.
 
 getwd()
-
