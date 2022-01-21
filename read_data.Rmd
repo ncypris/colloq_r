@@ -1,0 +1,98 @@
+---
+title: "read_data_examples"
+author: "Niklas Cypris"
+output: pdf_document
+---
+
+```{r setup}
+library(tidyverse)
+library(readxl)
+library(haven)
+```
+
+# Bechdel Data Set
+
+https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-03-09
+
+# IMPORTING AND EXPORTING DATA
+
+## Csv
+
+### Comma-separated variables
+
+Read
+
+```{r}
+df_csv1 <- read_csv(file = "./data/bechdel_csv1.csv")
+```
+
+Write
+
+```{r}
+write_csv(df_csv1, file = "./data/bechdel_csv1.csv")
+```
+
+### Semi-colon separated variables
+
+Decimal separators vary between countries. When commas serve as decimal separators, semi-colons are used as variable separators in csv files.
+
+https://en.wikipedia.org/wiki/Decimal_separator#/media/File:DecimalSeparator.svg
+
+Read
+
+```{r}
+df_csv2 <- read_csv2(file = "./data/bechdel_csv2.csv")
+```
+
+Write
+
+```{r}
+write_csv2(df_csv2, file = "./data/bechdel_csv2.csv")
+```
+
+further reading: https://r4ds.had.co.nz/data-import.html
+
+documentation: https://readr.tidyverse.org/
+
+
+## Excel
+
+Use `readxl` package to read excel files.
+
+```{r}
+df_xlsx <- read_xlsx(path = "./data/bechdel_xlsx.xlsx")
+```
+
+Read first sheet. Specify columns and rows
+
+documentation: https://readxl.tidyverse.org/
+
+## SPSS (sav)
+
+Use `haven` package to read sav files.
+
+Read
+
+```{r}
+df_sav <- read_sav(file = "./data/bechdel_sav.sav")
+```
+
+Write
+
+```{r}
+write_sav(df_sav, path = "./data/bechdel_sav.sav")
+```
+
+Haven also reads Stata and Sas files.
+
+documentation: https://haven.tidyverse.org/
+
+## Rda files
+
+```{r}
+load("./data/bechdel_rda.Rda")
+```
+
+```{r}
+save(df_rda, file = "./data/bechdel_rda.Rda")
+```

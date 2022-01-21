@@ -1,10 +1,13 @@
 ---
 title: "Basic Concepts"
 author: "Niklas Felix Cypris"
-output: html_document
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
 ---
 
-Ablauf:
+# Structure
 
 * Project folder structure
 
@@ -27,6 +30,10 @@ Ablauf:
   - Libraries
   
   - Headlines and ToC
+  
+* How to load data into R
+
+* Exercise: Set up R Project and load bechdel.csv
 
 
 # Important Terms
@@ -57,9 +64,11 @@ Bottom right: Files, Packages, Help
 
 This is where you will write your code in RStudio. Enables a good integration of text and code for reproducible analysis scripts. Top left panel in RStudio. Always assumes its own location as the reference point for the location of files.
 
+
 ### Console
 
-THe place where R does its magic.
+The place where R does its magic.
+
 
 ### Environment
 
