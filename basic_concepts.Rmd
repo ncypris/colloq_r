@@ -7,9 +7,17 @@ output:
     toc_float: TRUE
 ---
 
+# Goals
+
+* Understanding what R, RStudio, R Projects, RMarkdown files, etc. are
+
+* How to set up your R Project for scientific analyses
+
+* How to load data into R
+
 # Structure
 
-* Project folder structure
+* Project folder set up
 
   - R Project File
   
@@ -18,16 +26,12 @@ output:
   - Docs Folder
 
 * R and RStudio
-
-  - Terms & Concepts
-  
-  - Look and Feel
   
 * RMarkdown Document Structure
 
   - Setup Chunk
   
-  - Libraries
+  - Packages
   
   - Headlines and ToC
   
