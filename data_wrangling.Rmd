@@ -1,0 +1,417 @@
+---
+title: "Data Wrangling with Tidyverse"
+author: "Niklas Felix Cypris"
+output: pdf_document
+---
+
+```{r setup}
+library(tidyverse)
+library(visdat)
+
+Sys.setenv(LANG = "en")
+```
+
+# TOPICS
+
+1. FILTERING ROWS
+
+2. SELECTING COLUMNS
+
+3. CREATING NEW VARIABLES
+
+4. SUMMARIZING COLUMNS
+
+5. GROUPING OBSERVATIONS
+
+6. JOINING DATA SETS
+
+# READ DATA
+
+```{r}
+df <- read_csv(file = "./data/movies.csv")
+
+bechdel <- read_csv(file = "./data/bechdel.csv")
+```
+
+```{r}
+vis_dat(df)
+```
+
+# FILTERING ROWS
+
+filter() lets you pick rows based on the conditions you input.
+
+## Single condition
+
+x < y - x smaller than y
+
+x > y - x bigger than y
+
+x >= y - x bigger than or equal to y
+
+x == y - x equal to y
+
+x != y - x unequal to y
+
+x %in% c(a, b, c) - x equal to  a, b, or c
+
+is.na(x) - x is NA
+
+!is.na(x) - x is not NA
+
+
+Get only movies with production budget above $100,000,000
+
+```{r}
+df %>% 
+  filter(production_budget > 100000000)
+```
+
+Creating a subset
+
+```{r}
+expensive_df <- df %>% 
+  filter(production_budget > 100000000)
+```
+
+```{r}
+nrow(expensive_df)
+```
+
+## Multiple conditions
+
+X & Y - both conditions must be fulfilled
+
+X | Y - one of the conditions must be fulfilled
+
+```{r}
+df %>% 
+  filter(production_budget > 100000000 & genre == "Horror")
+```
+
+```{r}
+df %>% 
+  filter(production_budget > 100000000 | genre == "Horror")
+```
+
+## Exercise
+
+Keep only movies that were released after 2010. How many observations do you have?
+
+```{r}
+df %>%
+  filter(release_date > 2010) %>%
+  nrow()
+```
+
+Keep only rows where the PG rating is "PG-13" and which belong to the "Comedy", "Horror", or "Drama" genre.
+
+```{r}
+df %>% 
+  filter(mpaa_rating == "PG-13" & genre %in% c("Comedy", "Horror", "Drama"))
+```
+
+# SELECTING COLUMNS
+
+select() lets you pick columns based on the conditions you input.
+
+Get only the release_date and genre columns
+
+```{r}
+df %>% 
+  select(release_date, genre)
+```
+
+Get everything but the release_date and genre columns
+
+```{r}
+df %>% 
+  select(!c(release_date, genre))
+```
+
+## Useful helper functions
+
+starts_with():
+
+```{r}
+df %>% 
+  select(starts_with("release"))
+```
+
+ends_with():
+
+```{r}
+df %>% 
+  select(ends_with("gross"))
+```
+
+contains():
+
+```{r}
+df %>% 
+  select(contains("o"))
+```
+
+everything():
+
+```{r}
+df %>% 
+  select(movie, everything())
+```
+
+## Exercise
+
+Move the genre column to the front.
+
+```{r}
+df %>% 
+  select(genre, everything())
+```
+
+Select all columns in the bechdel data set that measure movie budget.
+
+```{r}
+bechdel %>%
+  select(starts_with("budget"))
+```
+
+Remove all columns from the bechdel data set that indicate values adjusted to 2013 prices.
+
+```{r}
+bechdel %>% 
+  select(-ends_with("3"))
+```
+
+# CREATING NEW VARIABLES
+
+Creating new variables
+
+```{r}
+df %>% 
+  mutate(observation_nr = c(1:nrow(df)))
+```
+
+```{r}
+df %>% 
+  mutate(observation_nr = c(1:nrow(df))) %>% 
+  select(observation_nr, everything())
+```
+
+## sum() & rowSums() | mean() & rowMeans()
+
+```{r}
+df %>% 
+  select(domestic_gross)
+```
+
+
+```{r}
+df %>% 
+  select(domestic_gross) %>% 
+  sum(na.rm = TRUE)
+```
+
+```{r}
+df %>% 
+  select(ends_with("gross"))
+```
+
+```{r}
+df <- df %>% 
+  mutate(overall_gross = rowSums(select(., ends_with("gross")), na.rm = TRUE))
+```
+
+```{r}
+df %>% 
+  select(overall_gross)
+```
+
+## Exercise
+
+Create a column for the bechdel data set that computes how old the movies are. Move that column to the front of the data set.
+
+```{r}
+bechdel %>%
+  mutate(movie_age = 2022 - year) %>%
+  select(movie_age, everything())
+```
+
+Compute the overall boxoffice success adjusted to 2013 prices (made up of domgross_2013 and intgross_2013) for each movie in the bechdel data set.
+
+```{r}
+bechdel %>% 
+  mutate(overall_gross = rowMeans(select(bechdel, domgross_2013, intgross_2013), na.rm = TRUE))
+```
+
+Create a column called "pass" that says TRUE when the "clean_test" variable for an observation is "ok" and FALSE when the variable is anything else. Think of the logical operators that were introduced above.
+
+```{r}
+bechdel %>% 
+  mutate(pass = clean_test == "ok")
+```
+
+# SUMMARIZING COLUMNS
+
+Looking at summary values of columns
+
+```{r}
+df %>% 
+  mutate(mean_international_gross = mean(worldwide_gross, na.rm = TRUE)) %>% 
+  select(mean_international_gross)
+```
+
+```{r}
+df %>% 
+  summarise(mean_international_gross = mean(worldwide_gross, na.rm = TRUE))
+```
+
+# GROUPING OBSERVATIONS
+
+Looking at subgroups in the data
+
+e.g. average international box office success per year
+
+```{r}
+df %>% 
+  group_by(release_date) %>% 
+  summarise(mean_international_gross = mean(worldwide_gross, na.rm = TRUE))
+```
+
+## Exercise
+
+Filter only movies between 2010 and 2013 and look at the average domestic gross per year and genre (input both variables in the group_by-function at the same time).
+
+```{r}
+df %>% 
+  filter(release_date >= 2010 & release_date <= 2013) %>% 
+  group_by(release_date, genre) %>% 
+  summarise(mean_dom = mean(domestic_gross, na.rm = TRUE))
+```
+
+Compute the overall returns of movies per year starting 1990
+
+```{r}
+df %>% 
+  filter(release_date >= 1990) %>% 
+  group_by(release_date) %>% 
+  summarise(overall_returns = rowSums(select(df, domestic_gross, worldwide_gross), na.rm = TRUE))
+```
+
+# JOINING DATA SETS
+
+## CBIND() & RBIND()
+
+```{r}
+bechdel_col1 <- bechdel[,1:5]
+bechdel_col2 <- bechdel[,6:ncol(bechdel)]
+```
+
+```{r}
+bechdel_coll_all <- cbind(bechdel_col1, bechdel_col2)
+```
+
+```{r}
+all_equal(bechdel_coll_all, bechdel)
+```
+
+```{r}
+bechdel_row1 <- bechdel[1:1000,]
+bechdel_row2 <- bechdel[1001:nrow(bechdel),]
+```
+
+```{r}
+bechdel_row_all <- rbind(bechdel_row1, bechdel_row2)
+```
+
+```{r}
+all_equal(bechdel_row_all, bechdel)
+```
+
+## JOINS
+
+https://github.com/gadenbuie/tidyexplain
+
+```{r make example data sets}
+bechdel <- bechdel %>% 
+  mutate(id = 1:nrow(.)) %>% 
+  select(id, everything())
+
+bechdel1 <- bechdel[1:(nrow(bechdel)-4),1:4]
+bechdel2 <- bechdel[5:nrow(bechdel),c(1, 5:ncol(bechdel))]
+```
+
+## INNER JOIN
+
+All rows from x where there are matching values in y, and all columns from x and y.
+
+```{r}
+innerjoin <- inner_join(bechdel1, bechdel2, by = c("id" = "id"))
+```
+
+## LEFT JOIN
+
+All rows from x, and all columns from x and y. Rows in x with no match in y will have NA values in the new columns.
+
+```{r}
+leftjoin <- left_join(bechdel1, bechdel2, by = c("id" = "id"))
+```
+
+## RIGHT JOIN
+
+All rows from y, and all columns from x and y. Rows in y with no match in x will have NA values in the new columns.
+
+```{r}
+rightjoin <- right_join(bechdel1, bechdel2, by = c("id" = "id"))
+```
+
+## FULL JOIN
+
+All rows and all columns from both x and y. Where there are not matching values, returns NA for the one missing.
+
+```{r}
+fulljoin <- full_join(bechdel1, bechdel2, by = c("id" = "id"))
+```
+
+## SEMI JOIN
+
+All rows from x where there are matching values in y, keeping just columns from x.
+
+```{r}
+bechdel2_tarantino <- bechdel2 %>% 
+    filter(str_detect(director, "Tarantino"))
+```
+
+```{r}
+semijoin <- semi_join(bechdel1, bechdel2_tarantino, by = c("id" = "id"))
+```
+
+## ANTI JOIN
+
+All rows from x where there are not matching values in y, keeping just columns from x.
+
+```{r}
+antijoin <- anti_join(bechdel1, bechdel2, by = c("id" = "id"))
+```
+
+## EXERCISE
+
+```{r make example data sets}
+movies <- df %>% 
+  mutate(id = 1:nrow(.)) %>% 
+  select(id, everything())
+
+movies1 <- movies[1:(nrow(movies)-400), 1:3]
+movies2 <- movies[200:nrow(movies), c(1, 4:ncol(movies))]
+```
+
+You want to join movies1 and movies2 to create a movies_new1 data frame. That data frame should contain all rows and columns from movies1 and all columns from movies2. Select the correct *join() command.
+
+```{r}
+movies_new1 <- left_join(movies1, movies2, by = c("id" = "id"))
+```
+
+You want to join movies1 and movies2 to create a movies_new2 data frame. That data frame should contain all rows and columns from movies1 and all rows and columns from movies2. Select the correct *join() command.
+
+```{r}
+movies_new2 <- full_join(movies1, movies2, by = c("id" = "id"))
+```
